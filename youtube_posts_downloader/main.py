@@ -24,6 +24,7 @@ Examples:
   python -m youtube_posts_downloader              # Interactive mode
   python -m youtube_posts_downloader --output ./posts  # Custom output directory
   python -m youtube_posts_downloader --secrets ./secrets.json  # Custom secrets file
+  python -m youtube_posts_downloader --no-images  # Download without local images
         """
     )
 
@@ -37,6 +38,13 @@ Examples:
         "-s", "--secrets",
         default=None,
         help="Path to OAuth2 client secrets JSON file",
+    )
+
+    parser.add_argument(
+        "--no-images",
+        action="store_true",
+        default=False,
+        help="Do not download images locally (keep remote URLs)",
     )
 
     parser.add_argument(
@@ -58,8 +66,8 @@ def main():
         output_dir=args.output,
     )
 
-    # Run CLI
-    cli = CLI(config)
+    # Create CLI with image download setting
+    cli = CLI(config, download_images=not args.no_images)
     cli.run()
 
 

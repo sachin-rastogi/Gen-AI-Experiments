@@ -17,14 +17,16 @@ from .markdown_generator import MarkdownGenerator
 class CLI:
     """Interactive command-line interface for the downloader."""
 
-    def __init__(self, config: Optional[Config] = None):
+    def __init__(self, config: Optional[Config] = None, download_images: bool = True):
         """
         Initialize CLI.
 
         Args:
             config: Optional configuration object.
+            download_images: Whether to download images locally (default: True).
         """
         self.config = config or Config()
+        self.download_images = download_images
         self.auth_handler = None
         self.api_client = None
 
@@ -165,7 +167,7 @@ class CLI:
 
             # Generate files
             file_namer = FileNamer()
-            markdown_gen = MarkdownGenerator(self.api_client)
+            markdown_gen = MarkdownGenerator(self.api_client, download_images=self.download_images)
 
             print(f"\nSaving files to: {self.config.output_dir}")
             print("-" * 50)

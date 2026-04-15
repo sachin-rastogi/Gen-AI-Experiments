@@ -1,6 +1,6 @@
 # YouTube Posts Downloader
 
-A Python CLI utility that downloads YouTube Community Posts from subscribed channels as individual Markdown files.
+A Python CLI utility that downloads YouTube Community Posts from subscribed channels as individual Markdown files, with optional local image downloading.
 
 ## Features
 
@@ -10,6 +10,8 @@ A Python CLI utility that downloads YouTube Community Posts from subscribed chan
 - Generates one `.md` file per post
 - Filename based on post date and title
 - Markdown files include YAML front matter with post metadata
+- **Download images locally** - Images and video thumbnails are downloaded to a local `images/` folder
+- **Offline viewing** - Markdown files work without internet connection (when images are local)
 
 ## Installation
 
@@ -35,14 +37,20 @@ The application expects `client_secrets.json` in the project root by default. Yo
 ## Usage
 
 ```bash
-# Interactive mode
+# Interactive mode (with local image downloading)
 python -m youtube_posts_downloader
+
+# Interactive mode without downloading images
+python -m youtube_posts_downloader --no-images
 
 # Specify output directory
 python -m youtube_posts_downloader --output ./my-posts
 
 # Specify custom secrets file
 python -m youtube_posts_downloader --secrets ./my-secrets.json
+
+# Combine options
+python -m youtube_posts_downloader --output ./my-posts --no-images
 ```
 
 ### CLI Prompts
@@ -68,6 +76,19 @@ Each post is saved as a Markdown file with the format:
 
 Example: `2023-06-15_community-update.md`
 
+### Directory Structure
+
+```
+output_directory/
+├── 2023-06-15_post-1.md
+├── 2023-06-16_post-2.md
+├── 2023-06-17_post-3.md
+└── images/
+    ├── abc123def456.jpg    # Downloaded images
+    ├── ghi789jkl012.jpg
+    └── mno345pqr678.png    # Video thumbnails
+```
+
 ### Markdown File Format
 
 ```markdown
@@ -78,12 +99,31 @@ channel_id: UCxxxxx
 channel_title: Channel Name
 post_id: xxxxxx
 filename: 2023-06-15_post-title.md
+image_url: https://example.com/original-image.jpg
+video_id: abc123
+video_title: My Video
 ---
 
 Post content here...
 
-![Image](https://example.com/image.jpg)
+![Image](images/abc123def456.jpg)
+
+### My Video
+
+[Watch on YouTube](https://www.youtube.com/watch?v=abc123)
+
+[![Video Thumbnail](images/ghi789jkl012.jpg)](https://www.youtube.com/watch?v=abc123)
 ```
+
+## Options
+
+| Option | Description |
+|--------|-------------|
+| `-o, --output DIR` | Output directory (default: ./downloaded_posts) |
+| `-s, --secrets FILE` | OAuth2 client secrets JSON file |
+| `--no-images` | Don't download images locally (keep remote URLs) |
+| `--version` | Show version number |
+| `-h, --help` | Show help message |
 
 ## Testing
 
@@ -108,7 +148,7 @@ youtube_posts_downloader/
 ├── api_client.py        # YouTube API wrapper
 ├── time_filter.py       # Date range filtering
 ├── file_namer.py        # Filename generation
-├── markdown_generator.py # Markdown file generation
+├── markdown_generator.py # Markdown file generation (with image download)
 ├── cli.py               # CLI interface
 └── main.py              # Entry point
 
